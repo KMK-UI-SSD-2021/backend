@@ -1,13 +1,13 @@
 version: "3.8"
 
 services:
-  kmk-backend:
+  backend:
     build:
       context: .
-      dockerfile: ./kmk-backend/Dockerfile
-    container_name: kmk-backend
+      dockerfile: ./backend/Dockerfile
+    container_name: backend
     volumes:
       - .:/app
-    hostname: kmk-backend
+    hostname: backend
     ports:
       - 5000:5000

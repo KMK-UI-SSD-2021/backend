@@ -1,2 +1,2 @@
-# KMK Backend
-This repo represents the backend of the KMK project
+# Backend
+This repo contains the backend of the KMK project

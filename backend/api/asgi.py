@@ -3,9 +3,9 @@ from fastapi import FastAPI
 
 def get_application() -> FastAPI:
     application = FastAPI(
-        title='MKM API',
+        title='API',
         version='0.1',
-        description='An API fro the KMK project'
+        description='An API for the KMK project'
     )
     return application
 

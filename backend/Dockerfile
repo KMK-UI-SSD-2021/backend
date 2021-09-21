@@ -12,4 +12,4 @@ COPY . .
 RUN pip3 install pipenv
 RUN pipenv install --deploy --clear --system --ignore-pipfile
 
-ENTRYPOINT ["bash", "/app/kmk-backend/docker-entrypoint.sh"]
+ENTRYPOINT ["bash", "/app/backend/docker-entrypoint.sh"]
