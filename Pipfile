@@ -8,6 +8,8 @@ verify_ssl = true
 [packages]
 fastapi = "==0.68.1"
 uvicorn = "==0.15.0"
+python-multipart = "==0.0.5"
+typing-extensions = "==3.10.0.2"
 
 [requires]
 python_version = "3.9"
