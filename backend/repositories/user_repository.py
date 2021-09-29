@@ -3,7 +3,7 @@ from sqlite3 import Connection
 from typing import Optional
 
 from backend.repositories.abstract import AbstractRepository
-from backend.models.auth import UserInDb
+from backend.models.auth import UserInDb, User
 
 
 class UserRepository(AbstractRepository):
@@ -27,6 +27,19 @@ class UserRepository(AbstractRepository):
             print('Exception arose:', e)
             raise
 
+    def get_user(self, username: str) -> Optional[User]:
+        try:
+            with closing(self._conn.cursor()) as cursor:
+                query = f"""SELECT joined_at FROM users
+                            WHERE username = '{username}';"""
+                cursor.execute(query)
+
+                if data := cursor.fetchone():
+                    return User(username=username, joined_at=data[0])
+
+        except Exception as e:
+            print('Exception arose:', e)
+
     def get_hashed_password(self, username: str) -> Optional[str]:
         try:
             with closing(self._conn.cursor()) as cursor:
@@ -34,12 +47,8 @@ class UserRepository(AbstractRepository):
                             WHERE username = '{username}';"""
                 cursor.execute(query)
 
-                data = cursor.fetchone()
-                if data is None:
-                    return None
-
-                hashed_password = data[0]
-                return hashed_password
+                if data := cursor.fetchone():
+                    return data[0]
 
         except Exception as e:
             print('Exception arose:', e)
