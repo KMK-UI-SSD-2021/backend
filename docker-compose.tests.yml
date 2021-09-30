@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      args:
+        ENV: dev
+    volumes:
+      - ./tox.ini:/app/tox.ini
+    entrypoint: >
+      bash -c "cd /app && python3 -m pytest
+      --cov="backend" --cov-config=tox.ini
+      --cov-branch --cov-fail-under=0
+      --cov-report term-missing /app/backend"

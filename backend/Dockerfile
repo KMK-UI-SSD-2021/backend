@@ -4,12 +4,17 @@ WORKDIR /app
 
 USER root
 ENV PYTHONUNBUFFERED 1
+ARG ENV
 
+COPY . .
 COPY ./Pipfile .
 COPY ./Pipfile.lock .
-COPY . .
 
 RUN pip3 install pipenv
-RUN pipenv install --deploy --clear --system --ignore-pipfile
+RUN if [ "$ENV" = "dev" ]; then \
+    pipenv install --dev --deploy --clear --system --ignore-pipfile; \
+else \
+    pipenv install --deploy --clear --system --ignore-pipfile; \
+fi
 
 ENTRYPOINT ["bash", "/app/backend/docker-entrypoint.sh"]
