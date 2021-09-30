@@ -25,4 +25,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pipenv run test -vs
+          bash -c "python -m pytest
+          --cov="backend" --cov-config=tox.ini
+          --cov-branch --cov-fail-under=0
+          --cov-report term-missing /backend"
