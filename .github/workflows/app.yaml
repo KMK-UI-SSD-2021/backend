@@ -16,7 +16,13 @@ jobs:
           python-version: "3.9"
 
       - name: Lint code with flake8
-        uses: py-actions/flake8@v1
+        run: |
+          target=$GITHUB_HEAD_REF && \
+          files=$(git diff --name-only --relative origin/${target} -- '*.py') && \
+          echo ${files}
+
+      # - name: Lint code with flake8
+      #   uses: py-actions/flake8@v1
 
   test:
     runs-on: ubuntu-latest
