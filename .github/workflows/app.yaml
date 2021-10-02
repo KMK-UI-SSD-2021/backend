@@ -18,9 +18,9 @@ jobs:
       - name: Lint code with flake8
         run: |
           target=$GITHUB_HEAD_REF && \
-          echo ${target} && \
+          echo "${target}" && \
           files=$(git diff --name-only --relative ${target} -- '*.py') && \
-          echo ${files}
+          echo "${files}"
 
   test:
     runs-on: ubuntu-latest
