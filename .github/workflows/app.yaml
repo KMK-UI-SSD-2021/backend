@@ -20,7 +20,7 @@ jobs:
           export target=$GITHUB_BASE_REF && \
           git fetch origin $target && \
           export files=$(git diff --name-only --relative origin/$target -- '*.py') && \
-          echo "$files"
+          if [ ! -z "${files}" ]; then pip3 install pre-commit; echo ${files} | xargs pre-commit run flake8 --files; fi
 
   test:
     runs-on: ubuntu-latest
