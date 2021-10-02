@@ -19,7 +19,7 @@ jobs:
         run: |
           target=$GITHUB_HEAD_REF && \
           echo ${target} && \
-          files=$(git diff --name-only --relative origin/${target} -- '*.py') && \
+          files=$(git diff --name-only --relative ${target} -- '*.py') && \
           echo ${files}
 
   test:
