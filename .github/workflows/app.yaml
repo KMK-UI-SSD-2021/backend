@@ -1,5 +1,5 @@
 name: CI
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   lint:
@@ -18,8 +18,7 @@ jobs:
       - name: Lint code with flake8
         run: |
           export target=$GITHUB_BASE_REF && \
-          echo "$GITHUB_BASE_REF" && \
-          export files=$(git diff --name-only --relative ${target} -- '*.py') && \
+          export files=$(git diff --name-only --relative origin/${target} -- '*.py') && \
           echo "$files"
 
   test:
