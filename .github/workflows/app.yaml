@@ -1,0 +1,35 @@
+name: CI
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.9"
+
+      - name: Lint code with flake8
+        run: |
+          export target=$GITHUB_BASE_REF && \
+          git fetch origin $target && \
+          export files=$(git diff --name-only --relative origin/$target -- '*.py') && \
+          if [ ! -z "${files}" ]; then pip3 install pre-commit; echo ${files} | xargs pre-commit run flake8 --files; fi
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: |
+          scripts/run_tests.sh

@@ -12,4 +12,9 @@ docker-compose -f docker-compose.yml \
                -f docker-compose.tests.yml \
                down -v
 
+if [ "$status" = 5 ]; then
+    echo "No tests collected"
+    exit 0
+fi
+
 exit $status
