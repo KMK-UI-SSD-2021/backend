@@ -2,12 +2,28 @@ name: CI
 on: push
 
 jobs:
+  lint:
+    runson: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.9"
+
+      - name: Lint code with flake8
+        uses: py-actions/flake8@v1
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Run tests
