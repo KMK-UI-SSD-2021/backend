@@ -1,9 +1,8 @@
 from contextlib import closing
 from sqlite3 import Connection
-from typing import Optional
 
-from backend.repositories.abstract import AbstractRepository
 from backend.models.base import GameLobby, GameSettings
+from backend.repositories.abstract import AbstractRepository
 
 
 class LobbyRepository(AbstractRepository):
@@ -26,12 +25,12 @@ class LobbyRepository(AbstractRepository):
             print('Exception arose:', e)
             raise
 
-    def get(self, id: int) -> GameLobby:
+    def get(self, game_id: int) -> GameLobby:
         try:
             with closing(self._conn.cursor()) as cursor:
-                query = f"""SELECT owner, name, settings FROM lobbies
-                            WHERE id = {id}"""
-                cursor.execute(query)
+                query = """SELECT owner, name, settings FROM lobbies
+                           WHERE id = ?;"""
+                cursor.execute(query, (game_id, ))
 
                 lobby_data = cursor.fetchone()
                 if not lobby_data:
@@ -49,9 +48,13 @@ class LobbyRepository(AbstractRepository):
     def _add(self, lobby: GameLobby) -> None:
         try:
             with closing(self._conn.cursor()) as cursor:
-                query = f"""INSERT INTO lobbies (owner, name, settings)
-                            VALUES ('{lobby.owner}', '{lobby.name}', '{lobby.settings.json()}');"""
-                cursor.execute(query)
+                query = """INSERT INTO lobbies (owner, name, settings)
+                           VALUES (?, ?, ?);"""
+                cursor.execute(query, (
+                    lobby.owner,
+                    lobby.name,
+                    lobby.settings.json()
+                ))
                 self._conn.commit()
         except Exception as e:
             print('Exception arose:', e)

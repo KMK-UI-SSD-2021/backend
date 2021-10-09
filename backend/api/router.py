@@ -1,23 +1,14 @@
 import sqlite3
-import secrets
-from datetime import datetime
 
-from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import APIRouter
 from starlette.responses import JSONResponse
 from starlette.status import (HTTP_200_OK, HTTP_201_CREATED,
                               HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND)
 
 from backend.config import Config
-from backend.models.auth import UserInDb
-from backend.models.base import Image, GameSettings, GameLobby
+from backend.models.base import GameLobby, GameSettings, Image
 from backend.repositories.lobby_repository import LobbyRepository
-from backend.repositories.user_repository import UserRepository
-from backend.services.auth import (login_user,
-                                   create_user,
-                                   hash_password,
-                                   check_password,
-                                   check_if_user_exists)
+from backend.services.auth import create_user, login_user
 
 router = APIRouter()
 connection = sqlite3.connect(Config().db_path)
@@ -64,5 +55,4 @@ async def get_lobby(lobby_id: int):
     if lobby is None:
         return JSONResponse(content={'error': 'Not found'}, status_code=HTTP_404_NOT_FOUND)
 
-    return JSONResponse(content=lobby.json())
-
+    return JSONResponse(content=lobby.dict())
