@@ -13,4 +13,4 @@ services:
       --junitxml=/app/reports/report.xml
       --cov="backend" --cov-config=tox.ini
       --cov-branch --cov-fail-under=0
-      --cov-report=xml /app/backend"
+      --cov-report=term-missing /app/backend"
