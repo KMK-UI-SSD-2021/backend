@@ -7,8 +7,10 @@ services:
         ENV: dev
     volumes:
       - ./tox.ini:/app/tox.ini
+      - ./reports:/app/reports
     entrypoint: >
       bash -c "cd /app && python3 -m pytest
+      --junitxml=/app/reports/report.xml
       --cov="backend" --cov-config=tox.ini
       --cov-branch --cov-fail-under=0
-      --cov-report term-missing /app/backend"
+      --cov-report=xml /app/backend"
