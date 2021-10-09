@@ -1,15 +1,17 @@
+import sqlite3
 from typing import Callable
 
 from fastapi import FastAPI
 
 from backend.api.router import router
-from backend.config import ConfigurationManager
+from backend.config import Config
 from backend.repositories.user_repository import UserRepository
 
 
-def startup_handler(application: FastAPI) -> Callable:
+def startup_handler(application: FastAPI) -> Callable:  # pragma: no cover
     async def startup() -> None:
-        application.state.user_repo = UserRepository(config_manager.db_conn)
+        application.state.db_conn = sqlite3.connect(Config().db_path)
+        application.state.user_repo = UserRepository(application.state.db_conn)
     return startup
 
 
@@ -26,5 +28,4 @@ def get_application() -> FastAPI:
     return application
 
 
-config_manager = ConfigurationManager()
 app = get_application()

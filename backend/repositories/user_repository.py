@@ -23,7 +23,8 @@ class UserRepository(AbstractRepository):
                             joined_at VARCHAR (128));"""
                 cursor.execute(query)
                 self._conn.commit()
-        except Exception as e:
+
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
@@ -37,7 +38,7 @@ class UserRepository(AbstractRepository):
                 if data := cursor.fetchone():
                     return User(username=username, joined_at=data[0])
 
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
 
     def get_hashed_password(self, username: str) -> Optional[str]:
@@ -50,7 +51,7 @@ class UserRepository(AbstractRepository):
                 if data := cursor.fetchone():
                     return data[0]
 
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
@@ -68,7 +69,7 @@ class UserRepository(AbstractRepository):
                 token = data[0]
                 return token
 
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
@@ -84,9 +85,10 @@ class UserRepository(AbstractRepository):
                     user.joined_at
                 ))
                 self._conn.commit()
-        except Exception as e:
+
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
-    def _add_bulk(self, users: list[UserInDb]) -> None:
+    def _add_bulk(self, users: list[UserInDb]) -> None:   # pragma: no cover
         pass

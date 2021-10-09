@@ -1,28 +1,13 @@
-import sqlite3
-
 import pytest
 from starlette.testclient import TestClient
 
-from backend.api.asgi import app
 from backend.models.auth import UserInRequest
-from backend.repositories.user_repository import UserRepository
 from backend.services.auth import create_user
 
 
 @pytest.fixture
 def mock_user() -> UserInRequest:
     return UserInRequest(username='test', password='test')
-
-
-@pytest.fixture
-def mock_db_conn() -> sqlite3.Connection:
-    yield sqlite3.connect(':memory:')
-
-
-@pytest.fixture
-def mock_client(mock_db_conn: sqlite3.Connection) -> TestClient:
-    app.state.user_repo = UserRepository(mock_db_conn)
-    yield TestClient(app)
 
 
 class TestRegister:
