@@ -2,8 +2,8 @@ from contextlib import closing
 from sqlite3 import Connection
 from typing import Optional
 
+from backend.models.auth import User, UserInDb
 from backend.repositories.abstract import AbstractRepository
-from backend.models.auth import UserInDb, User
 
 
 class UserRepository(AbstractRepository):
@@ -30,9 +30,9 @@ class UserRepository(AbstractRepository):
     def get_user(self, username: str) -> Optional[User]:
         try:
             with closing(self._conn.cursor()) as cursor:
-                query = f"""SELECT joined_at FROM users
-                            WHERE username = '{username}';"""
-                cursor.execute(query)
+                query = """SELECT joined_at FROM users
+                           WHERE username = ?;"""
+                cursor.execute(query, (username, ))
 
                 if data := cursor.fetchone():
                     return User(username=username, joined_at=data[0])
@@ -43,9 +43,9 @@ class UserRepository(AbstractRepository):
     def get_hashed_password(self, username: str) -> Optional[str]:
         try:
             with closing(self._conn.cursor()) as cursor:
-                query = f"""SELECT hashed_password FROM users
-                            WHERE username = '{username}';"""
-                cursor.execute(query)
+                query = """SELECT hashed_password FROM users
+                           WHERE username = ?;"""
+                cursor.execute(query, (username, ))
 
                 if data := cursor.fetchone():
                     return data[0]
@@ -57,9 +57,9 @@ class UserRepository(AbstractRepository):
     def get_token(self, username: str) -> Optional[str]:
         try:
             with closing(self._conn.cursor()) as cursor:
-                query = f"""SELECT token FROM users
-                            WHERE username = '{username}';"""
-                cursor.execute(query)
+                query = """SELECT token FROM users
+                           WHERE username = ?;"""
+                cursor.execute(query, (username, ))
 
                 data = cursor.fetchone()
                 if data is None:
@@ -75,9 +75,14 @@ class UserRepository(AbstractRepository):
     def _add(self, user: UserInDb) -> None:
         try:
             with closing(self._conn.cursor()) as cursor:
-                query = f"""INSERT INTO users (username, token, hashed_password, joined_at)
-                            VALUES ('{user.username}', '{user.token}', '{user.hashed_password}', '{user.joined_at}');"""
-                cursor.execute(query)
+                query = """INSERT INTO users (username, token, hashed_password, joined_at)
+                           VALUES (?, ?, ?, ?);"""
+                cursor.execute(query, (
+                    user.username,
+                    user.token,
+                    user.hashed_password,
+                    user.joined_at
+                ))
                 self._conn.commit()
         except Exception as e:
             print('Exception arose:', e)

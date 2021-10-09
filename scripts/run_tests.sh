@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd $(dirname $0)/..
+cd "$(dirname $0)"/..
 
 docker-compose -f docker-compose.yml \
                -f docker-compose.tests.yml \
