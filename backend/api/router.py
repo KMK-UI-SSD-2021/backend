@@ -1,11 +1,12 @@
 import sqlite3
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 from starlette.status import (HTTP_200_OK, HTTP_201_CREATED,
                               HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND)
 
 from backend.config import Config
+from backend.models.auth import UserInRequest
 from backend.models.base import GameLobby, GameSettings, Image
 from backend.repositories.lobby_repository import LobbyRepository
 from backend.services.auth import create_user, login_user
@@ -15,16 +16,18 @@ connection = sqlite3.connect(Config().db_path)
 
 
 @router.post('/register')
-async def register(username: str, password: str):
-    if token := create_user(username, password):
+async def register(request: Request, user: UserInRequest):
+    user_repo = request.app.state.user_repo
+    if token := create_user(user_repo, user.username, user.password):
         return JSONResponse(content={'token': token}, status_code=HTTP_201_CREATED)
 
     return JSONResponse(content={'error': 'user exists'}, status_code=HTTP_400_BAD_REQUEST)
 
 
 @router.post('/login')
-async def login(username: str, password: str):
-    if token := login_user(username, password):
+async def login(request: Request, user: UserInRequest):
+    user_repo = request.app.state.user_repo
+    if token := login_user(user_repo, user.username, user.password):
         return JSONResponse(content={'token': token}, status_code=HTTP_200_OK)
 
     return JSONResponse(content={'error': 'wrong credentials'}, status_code=HTTP_400_BAD_REQUEST)

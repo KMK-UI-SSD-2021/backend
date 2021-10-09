@@ -33,3 +33,6 @@ jobs:
       - name: Run tests
         run: |
           scripts/run_tests.sh
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2

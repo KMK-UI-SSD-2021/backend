@@ -8,7 +8,11 @@ class User(BaseModel):
     joined_at: datetime
 
 
+class UserInRequest(BaseModel):
+    username: str
+    password: str
+
+
 class UserInDb(User):
     token: str
     hashed_password: str
-
