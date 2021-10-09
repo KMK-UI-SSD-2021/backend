@@ -280,5 +280,6 @@ cython_debug/
 
 # pytest
 .pytest_cache
+reports/*
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,pycharm,python
