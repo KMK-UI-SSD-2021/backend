@@ -6,6 +6,7 @@ from starlette.testclient import TestClient
 from backend.api.asgi import app
 from backend.models.lobby import Image, Settings
 from backend.repositories.lobby_repository import LobbyRepository
+from backend.repositories.statistics_repository import StatisticsRepository
 from backend.repositories.user_repository import UserRepository
 
 
@@ -25,9 +26,17 @@ def mock_lobby_repo(mock_db_conn: sqlite3.Connection) -> LobbyRepository:
 
 
 @pytest.fixture
-def mock_client(mock_user_repo: UserRepository, mock_lobby_repo: LobbyRepository) -> TestClient:
+def mock_statistics_repo(mock_db_conn: sqlite3.Connection) -> StatisticsRepository:
+    return StatisticsRepository(mock_db_conn)
+
+
+@pytest.fixture
+def mock_client(mock_user_repo: UserRepository,
+                mock_lobby_repo: LobbyRepository,
+                mock_statistics_repo: StatisticsRepository) -> TestClient:
     app.state.user_repo = mock_user_repo
     app.state.lobby_repo = mock_lobby_repo
+    app.state.statistics_repo = mock_statistics_repo
     yield TestClient(app)
 
 

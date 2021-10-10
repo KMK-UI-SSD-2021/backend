@@ -21,6 +21,7 @@ class LobbyRepository(AbstractRepository):
                             settings VARCHAR (1024));"""
                 cursor.execute(query)
                 self._conn.commit()
+
         except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
