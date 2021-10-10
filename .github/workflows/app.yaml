@@ -7,6 +7,7 @@ on:
 
 jobs:
   lint:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -22,6 +23,7 @@ jobs:
       - name: Lint code with flake8
         run: |
           export target=$GITHUB_BASE_REF && \
+          echo $GITHUB_EVENT_NAME && \
           git fetch origin $target && \
           export files=$(git diff --name-only --relative origin/$target -- '*.py') && \
           if [ ! -z "${files}" ]; then pip3 install pre-commit; echo ${files} | xargs pre-commit run flake8 --files; fi
