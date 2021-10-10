@@ -9,7 +9,7 @@ def mock_lobby(mock_settings: Settings) -> Lobby:
     return Lobby(owner='test', name='test', settings=mock_settings)
 
 
-class TestUserRepository:
+class TestLobbyRepository:
 
     def test_add(self, mock_lobby_repo: LobbyRepository, mock_lobby: Lobby):
         mock_lobby_repo._add(lobby=mock_lobby)

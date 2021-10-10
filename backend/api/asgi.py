@@ -8,6 +8,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from backend.api.router import router
 from backend.config import Config
 from backend.repositories.lobby_repository import LobbyRepository
+from backend.repositories.statistics_repository import StatisticsRepository
 from backend.repositories.user_repository import UserRepository
 
 
@@ -16,6 +17,7 @@ def startup_handler(application: FastAPI) -> Callable:  # pragma: no cover
         application.state.db_conn = sqlite3.connect(Config().db_path)
         application.state.user_repo = UserRepository(application.state.db_conn)
         application.state.lobby_repo = LobbyRepository(application.state.db_conn)
+        application.state.statistics_repo = StatisticsRepository(application.state.db_conn)
     return startup
 
 
