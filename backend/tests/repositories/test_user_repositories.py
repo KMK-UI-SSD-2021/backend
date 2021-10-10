@@ -33,6 +33,18 @@ class TestUserRepository:
         user = mock_user_repo.get_user(username='test')
         assert user is None
 
+    def test_get_user_by_token(self, mock_user_repo: UserRepository, mock_user_in_db: UserInDb):
+        mock_user_repo._add(mock_user_in_db)
+        user = mock_user_repo.get_user_by_token(mock_user_in_db.token)
+        assert user.dict() == {
+            'username': 'test',
+            'joined_at': datetime(2021, 10, 10, 0, 0, 0)
+        }
+
+    def test_get_user_by_token_not_exists(self, mock_user_repo: UserRepository):
+        user = mock_user_repo.get_user_by_token(token='test')
+        assert user is None
+
     def test_get_token(self, mock_user_repo: UserRepository, mock_user_in_db: UserInDb):
         mock_user_repo._add(mock_user_in_db)
         token = mock_user_repo.get_token(mock_user_in_db.username)

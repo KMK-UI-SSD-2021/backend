@@ -1,7 +1,9 @@
 import sqlite3
 from typing import Callable
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from starlette.responses import JSONResponse
+from starlette.status import HTTP_401_UNAUTHORIZED
 
 from backend.api.router import router
 from backend.config import Config
@@ -29,3 +31,24 @@ def get_application() -> FastAPI:
 
 
 app = get_application()
+
+
+@app.middleware('http')
+async def auth_middleware(request: Request, call_next: Callable):  # pragma: no cover
+    if request.url.path not in [
+        '/docs',
+        '/openapi.json',
+        '/api/v1/register',
+        '/api/v1/login'
+    ]:
+        repo = app.state.user_repo
+        if token := request.headers.get('token'):
+            if user := repo.get_user_by_token(token):
+                request.scope['user'] = user
+
+        if request.scope.get('user') is None:
+            return JSONResponse(content={'error': 'unauthorized'},
+                                status_code=HTTP_401_UNAUTHORIZED)
+
+    response = await call_next(request)
+    return response
