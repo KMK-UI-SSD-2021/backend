@@ -7,6 +7,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 
 from backend.api.router import router
 from backend.config import Config
+from backend.repositories.lobby_repository import LobbyRepository
 from backend.repositories.user_repository import UserRepository
 
 
@@ -14,6 +15,7 @@ def startup_handler(application: FastAPI) -> Callable:  # pragma: no cover
     async def startup() -> None:
         application.state.db_conn = sqlite3.connect(Config().db_path)
         application.state.user_repo = UserRepository(application.state.db_conn)
+        application.state.lobby_repo = LobbyRepository(application.state.db_conn)
     return startup
 
 
@@ -34,7 +36,7 @@ app = get_application()
 
 
 @app.middleware('http')
-async def auth_middleware(request: Request, call_next: Callable):  # pragma: no cover
+async def auth_middleware(request: Request, call_next: Callable):
     if request.url.path not in [
         '/docs',
         '/openapi.json',

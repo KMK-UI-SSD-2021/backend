@@ -1,4 +1,5 @@
 [flake8]
 max-line-length = 100
-
 max-complexity = 8
+
+extend-ignore=SFS301

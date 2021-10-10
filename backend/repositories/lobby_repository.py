@@ -1,7 +1,7 @@
 from contextlib import closing
 from sqlite3 import Connection
 
-from backend.models.base import GameLobby, GameSettings
+from backend.models.lobby import Lobby, Settings
 from backend.repositories.abstract import AbstractRepository
 
 
@@ -21,31 +21,31 @@ class LobbyRepository(AbstractRepository):
                             settings VARCHAR (1024));"""
                 cursor.execute(query)
                 self._conn.commit()
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
-    def get(self, game_id: int) -> GameLobby:
+    def get(self, lobby_id: int) -> Lobby:
         try:
             with closing(self._conn.cursor()) as cursor:
                 query = """SELECT owner, name, settings FROM lobbies
                            WHERE id = ?;"""
-                cursor.execute(query, (game_id, ))
+                cursor.execute(query, (lobby_id, ))
 
                 lobby_data = cursor.fetchone()
                 if not lobby_data:
                     return None
 
                 owner, name, settings = lobby_data
-                return GameLobby(owner=owner,
-                                 name=name,
-                                 settings=GameSettings.parse_raw(settings))
+                return Lobby(owner=owner,
+                             name=name,
+                             settings=Settings.parse_raw(settings))
 
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
-    def _add(self, lobby: GameLobby) -> None:
+    def _add(self, lobby: Lobby) -> int:
         try:
             with closing(self._conn.cursor()) as cursor:
                 query = """INSERT INTO lobbies (owner, name, settings)
@@ -55,10 +55,13 @@ class LobbyRepository(AbstractRepository):
                     lobby.name,
                     lobby.settings.json()
                 ))
+
                 self._conn.commit()
-        except Exception as e:
+                return cursor.lastrowid
+
+        except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
             raise
 
-    def _add_bulk(self, lobbies: list[GameLobby]) -> None:
+    def _add_bulk(self, lobbies: list[Lobby]) -> None:  # pragma: no cover
         pass
