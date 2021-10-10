@@ -73,3 +73,44 @@ The interaction with a third-party image hosting service is prototyped. Although
 ### Dynamic View
 ![](https://i.imgur.com/8GRtcPh.png)
 
+
+# Code linters and Tests
+
+### Pre-commit hooks
+Before commiting the changes we've made, it is always beneficial to double-check whether there are any issues in the new code, so we use *isort* and *flake8* checkers for this purpose.
+
+For example, a pre-commit report might look like this
+
+
+![](https://i.imgur.com/e5yqTLt.png)
+
+
+### Linters
+Linting is the first stage of the Github Actions CI pipeline in this repository. The same linters, *isort* and *flake8*, are used to check the quality of the last pushed code to a branch.
+
+
+![](https://i.imgur.com/RVvwlpU.png)
+
+After the pipeline is finished, the report is uploaded to *Codacy*, which yields code quality dashboards about our repository
+
+
+![](https://i.imgur.com/rRuNra4.png)
+
+
+### Coverage
+Tests are ran whenever new code is pushed to the remote; they help us to ensure that the code works as intended, and that no new bugs appeared in our codebase.
+
+
+![](https://i.imgur.com/vA5c2HH.png)
+
+
+After the pipeline is finished, the coverage report is uploaded to *codecov*, where a developer may find the visuals on tests coverage in the repository.
+
+
+![](https://i.imgur.com/Dt51Cvf.png)
+
+
+Also, the *Codecov Bot* assists with coverage information when a Pull Request is reviewed
+
+
+![](https://i.imgur.com/bDiTT2L.png)
