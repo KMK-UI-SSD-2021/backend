@@ -41,6 +41,19 @@ class UserRepository(AbstractRepository):
         except Exception as e:  # pragma: no cover
             print('Exception arose:', e)
 
+    def get_user_by_token(self, token: str) -> Optional[User]:
+        try:
+            with closing(self._conn.cursor()) as cursor:
+                query = """SELECT username, joined_at FROM users
+                           WHERE token = ?;"""
+                cursor.execute(query, (token, ))
+
+                if data := cursor.fetchone():
+                    return User(username=data[0], joined_at=data[1])
+
+        except Exception as e:  # pragma: no cover
+            print('Exception arose:', e)
+
     def get_hashed_password(self, username: str) -> Optional[str]:
         try:
             with closing(self._conn.cursor()) as cursor:
