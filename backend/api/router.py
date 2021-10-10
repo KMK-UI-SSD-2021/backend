@@ -1,24 +1,20 @@
-import sqlite3
-
 from fastapi import APIRouter, Request
 from starlette.responses import JSONResponse
 from starlette.status import (HTTP_200_OK, HTTP_201_CREATED,
                               HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND)
 
-from backend.config import Config
 from backend.models.auth import UserInRequest
-from backend.models.base import GameLobby, GameSettings, Image
-from backend.repositories.lobby_repository import LobbyRepository
-from backend.services.auth import create_user, login_user
+from backend.models.lobby import LobbyInRequest
+from backend.services import auth as auth_service
+from backend.services import lobby as lobby_service
 
 router = APIRouter()
-connection = sqlite3.connect(Config().db_path)
 
 
 @router.post('/register')
 async def register(request: Request, user: UserInRequest):
     user_repo = request.app.state.user_repo
-    if token := create_user(user_repo, user.username, user.password):
+    if token := auth_service.create_user(user_repo, user.username, user.password):
         return JSONResponse(content={'token': token}, status_code=HTTP_201_CREATED)
 
     return JSONResponse(content={'error': 'user exists'}, status_code=HTTP_400_BAD_REQUEST)
@@ -27,35 +23,26 @@ async def register(request: Request, user: UserInRequest):
 @router.post('/login')
 async def login(request: Request, user: UserInRequest):
     user_repo = request.app.state.user_repo
-    if token := login_user(user_repo, user.username, user.password):
+    if token := auth_service.login_user(user_repo, user.username, user.password):
         return JSONResponse(content={'token': token}, status_code=HTTP_200_OK)
 
     return JSONResponse(content={'error': 'wrong credentials'}, status_code=HTTP_400_BAD_REQUEST)
 
 
-@router.get('/create_lobby')
-async def create_lobby():
-    images = [
-        Image(url='https://imgur.com/sKV54PO'),
-        Image(url='https://imgur.com/sKV54PO'),
-        Image(url='https://imgur.com/sKV54PO'),
-    ]
-    tags = ['Like', 'Dislike']
-    settings = GameSettings(images_batch=3, images=images, tags=tags)
-    lobby = GameLobby(name='Test game lobby', settings=settings)
+@router.post('/create_lobby')
+async def create_lobby(request: Request, lobby_in_request: LobbyInRequest):
+    lobby_repo = request.app.state.lobby_repo
+    lobby_id = lobby_service.create_lobby(request.user, lobby_repo, lobby_in_request)
 
-    repo = LobbyRepository(connection)
-    repo._add(lobby)
-
-    return JSONResponse(content={'status': 'created'}, status_code=HTTP_200_OK)
+    return JSONResponse(content={'lobby_id': lobby_id}, status_code=HTTP_201_CREATED)
 
 
 @router.get('/get_lobby/{lobby_id}')
-async def get_lobby(lobby_id: int):
-    repo = LobbyRepository(connection)
-    lobby = repo.get(lobby_id)
+async def get_lobby(request: Request, lobby_id: int):
+    lobby_repo = request.app.state.lobby_repo
 
+    lobby = lobby_service.get_lobby(request.user, lobby_repo, lobby_id)
     if lobby is None:
-        return JSONResponse(content={'error': 'Not found'}, status_code=HTTP_404_NOT_FOUND)
+        return JSONResponse(content={'error': 'not found'}, status_code=HTTP_404_NOT_FOUND)
 
     return JSONResponse(content=lobby.dict())

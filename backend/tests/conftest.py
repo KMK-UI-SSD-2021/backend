@@ -4,6 +4,8 @@ import pytest
 from starlette.testclient import TestClient
 
 from backend.api.asgi import app
+from backend.models.lobby import Image, Settings
+from backend.repositories.lobby_repository import LobbyRepository
 from backend.repositories.user_repository import UserRepository
 
 
@@ -18,6 +20,20 @@ def mock_user_repo(mock_db_conn: sqlite3.Connection) -> UserRepository:
 
 
 @pytest.fixture
-def mock_client(mock_user_repo: UserRepository) -> TestClient:
+def mock_lobby_repo(mock_db_conn: sqlite3.Connection) -> LobbyRepository:
+    return LobbyRepository(mock_db_conn)
+
+
+@pytest.fixture
+def mock_client(mock_user_repo: UserRepository, mock_lobby_repo: LobbyRepository) -> TestClient:
     app.state.user_repo = mock_user_repo
+    app.state.lobby_repo = mock_lobby_repo
     yield TestClient(app)
+
+
+@pytest.fixture
+def mock_settings() -> Settings:
+    return Settings(images_batch=2,
+                    images=[Image(url='https://imgur.com/1'),
+                            Image(url='https://imgur.com/2')],
+                    tags=['test1', 'test2'])
