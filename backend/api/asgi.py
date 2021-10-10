@@ -23,7 +23,7 @@ def get_application() -> FastAPI:
     application = FastAPI(
         title='API',
         version='0.1',
-        description='An API for the KMK project'
+        description='An API for the KMK project',
     )
 
     application.add_event_handler('startup', startup_handler(application))
